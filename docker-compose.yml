@@ -6,7 +6,7 @@ services:
       - "6379:6379"
 
   bookmark_service:
-    image: bookmark_service:dev
+    image: chillseanguyen/lecture_4:dev
     restart: always
     container_name: bookmark_service
     ports:
