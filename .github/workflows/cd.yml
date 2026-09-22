@@ -1,0 +1,20 @@
+name: cd_pipeline
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  cd_pipeline:
+    runs-on: self-hosted
+    steps:
+      - name: Deploy Application
+        working-directory: /root/bookmark-deployment
+        run: |
+          echo "Deploying Application..."
+          git pull
+          docker rm -f bookmark_service
+          docker-compose pull bookmark_service
+          docker-compose up -d bookmark_service
+          docker system prune -f
