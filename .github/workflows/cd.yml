@@ -15,6 +15,6 @@ jobs:
           echo "Deploying Application..."
           git pull
           docker rm -f bookmark_service
-          docker-compose pull bookmark_service
-          docker-compose up -d bookmark_service
+          docker compose pull bookmark_service
+          docker compose up -d bookmark_service
           docker system prune -f
