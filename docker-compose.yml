@@ -1,4 +1,22 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres
+    restart: always
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: ${DB_USER:-admin}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-admin}
+      POSTGRES_DB: ${DB_NAME:-bookmark}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-admin} -d ${DB_NAME:-bookmark}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   redis:
     image: redis:alpine
     container_name: redis
@@ -6,13 +24,18 @@ services:
       - "6379:6379"
 
   bookmark_service:
-    image: chillseanguyen/bookmark_management:v0.1.5
+    image: chillseanguyen/bookmark_management:v0.1.6
     restart: always
     container_name: bookmark_service
     ports:
       - "8080:8000"
     env_file:
       - ./bookmark_service/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_started
 
   portal:
     image: ebvn/bookmark-app-portal:dev
@@ -26,3 +49,6 @@ services:
       - "80:80"
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+volumes:
+  postgres_data:
