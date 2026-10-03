@@ -1,0 +1,7 @@
+# Environment files (contain credentials)
+bookmark_service/.env
+.env
+
+# IDE
+.idea/
+.vscode/
